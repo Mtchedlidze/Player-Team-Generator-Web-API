@@ -1,7 +1,7 @@
 import { IsString, IsNumber, IsArray } from 'class-validator'
 import { Positon } from '../types'
 
-class SkillDTO {
+export class SkillDTO {
   @IsString()
   skill: string
 
