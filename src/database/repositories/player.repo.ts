@@ -7,8 +7,8 @@ import { PlayerDTO } from '../../common/dtos/player.dto'
 export class PlayerRepository {
   constructor(@InjectModel('Player') private playerModel: Model<PlayerDTO>) {}
 
-  create({ name, position }: Partial<PlayerDTO>) {
-    return this.playerModel.create({ name, position })
+  create(player: PlayerDTO) {
+    return this.playerModel.create(player)
   }
 
   list(limit?: number, offset?: number) {

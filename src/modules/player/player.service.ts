@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { PlayerDTO } from '../../common/dtos'
+import { CreatePlayerDTO, PlayerDTO } from '../../common/dtos'
 import { PlayerRepository } from 'src/database/repositories/player.repo'
 import { SkillsRepostiory } from 'src/database/repositories/skill.repo'
 
@@ -10,12 +10,14 @@ export class PlayerService {
     private readonly skillRepository: SkillsRepostiory,
   ) {}
 
-  async create(player: PlayerDTO) {
-    const { playerSkills, name, position } = player
-
+  async create({ playerSkills, ...player }: CreatePlayerDTO) {
     return Promise.all([
-      this.playerRepository.create({ name, position }),
+      this.playerRepository.create(player),
       this.skillRepository.create(playerSkills),
     ])
+  }
+
+  async find() {
+    return this.skillRepository.find()
   }
 }

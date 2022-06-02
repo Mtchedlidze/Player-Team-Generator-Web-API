@@ -10,4 +10,7 @@ export class SkillsRepostiory {
   create(skill: SkillDTO[]) {
     return this.skillModel.insertMany(skill)
   }
+  find() {
+    return this.skillModel.find()
+  }
 }
