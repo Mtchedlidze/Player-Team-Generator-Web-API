@@ -12,6 +12,6 @@ export class PlayerRepository {
   }
 
   list(limit?: number, offset?: number) {
-    return this.playerModel.find().limit(limit).skip(offset)
+    return this.playerModel.find().populate('playerSkills')
   }
 }

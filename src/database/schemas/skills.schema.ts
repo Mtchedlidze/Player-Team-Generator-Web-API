@@ -1,8 +1,6 @@
-import { Schema } from 'mongoose'
-import { PlayerSchema } from './player.schema'
-
+import { Schema, Types } from 'mongoose'
 export const SkillSchema = new Schema({
   skill: String,
   value: Number,
-  playerId: PlayerSchema,
+  playerId: Schema.Types.ObjectId,
 })

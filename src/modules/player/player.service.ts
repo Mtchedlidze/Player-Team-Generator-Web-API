@@ -10,14 +10,20 @@ export class PlayerService {
     private readonly skillRepository: SkillsRepostiory,
   ) {}
 
-  async create({ playerSkills, ...player }: CreatePlayerDTO) {
-    return Promise.all([
-      this.playerRepository.create(player),
-      this.skillRepository.create(playerSkills),
-    ])
+  async create({ playerSkills, ...playerData }: CreatePlayerDTO) {
+    const player = (await this.playerRepository.create(playerData)).toObject()
+    const skills = (
+      await this.skillRepository.create(playerSkills, player._id)
+    ).map((x) => x.toObject())
+
+    const createdPlayer: CreatePlayerDTO = {
+      ...player,
+      playerSkills: skills,
+    }
+    return createdPlayer
   }
 
   async find() {
-    return this.skillRepository.find()
+    return this.playerRepository.list()
   }
 }
