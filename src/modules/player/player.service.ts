@@ -1,29 +1,26 @@
 import { Injectable } from '@nestjs/common'
-import { CreatePlayerDTO, PlayerDTO } from '../../common/dtos'
-import { PlayerRepository } from 'src/database/repositories/player.repo'
-import { SkillsRepostiory } from 'src/database/repositories/skill.repo'
-
+import { Sequelize, Transaction } from 'sequelize'
+import { PlayerModel } from 'src/database/models'
+import { PlayerRepository, SkillRepository } from 'src/database/repositories'
+import { CreatePlayerDTO } from '../../common/dtos'
 @Injectable()
 export class PlayerService {
   constructor(
     private readonly playerRepository: PlayerRepository,
-    private readonly skillRepository: SkillsRepostiory,
+    private readonly skillRepository: SkillRepository,
   ) {}
 
-  async create({ playerSkills, ...playerData }: CreatePlayerDTO) {
-    const player = (await this.playerRepository.create(playerData)).toObject()
-    const skills = (
-      await this.skillRepository.create(playerSkills, player._id)
-    ).map((x) => x.toObject())
+  async create({ playerSkills, ...player }: CreatePlayerDTO) {
+    try {
+      const createdPlayer = await this.playerRepository.create(player)
 
-    const createdPlayer: CreatePlayerDTO = {
-      ...player,
-      playerSkills: skills,
+      const skills = await this.skillRepository.create(
+        playerSkills.map((s) => ({ ...s, playerId: createdPlayer.id })),
+      )
+
+      return { ...createdPlayer.toJSON(), playerSkills: skills }
+    } catch (error) {
+      throw new Error(error)
     }
-    return createdPlayer
-  }
-
-  async find() {
-    return this.playerRepository.list()
   }
 }
